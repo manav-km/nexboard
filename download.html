@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Download NexBoard</title>
+
+    <meta
+        name="description"
+        content="Download NexBoard for Windows — the modern classroom whiteboard."
+    >
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #070b12;
+            --card: rgba(16, 23, 36, 0.72);
+            --card-hover: rgba(22, 31, 48, 0.92);
+            --border: rgba(255, 255, 255, 0.09);
+
+            --text: #f5f7fa;
+            --muted: #8995a8;
+
+            --accent: #36a3ff;
+            --accent-dark: #197fd0;
+
+            --green: #46d98c;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 50% -15%,
+                    rgba(54, 163, 255, 0.17),
+                    transparent 40%
+                ),
+                radial-gradient(
+                    circle at -10% 100%,
+                    rgba(54, 163, 255, 0.08),
+                    transparent 32%
+                ),
+                var(--bg);
+
+            color: var(--text);
+
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+            overflow-x: hidden;
+        }
+
+        /* Background */
+
+        .glow {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+
+            border-radius: 50%;
+
+            background: rgba(54, 163, 255, 0.045);
+
+            filter: blur(110px);
+
+            pointer-events: none;
+
+            z-index: -1;
+        }
+
+        .glow.one {
+            top: 5%;
+            left: -280px;
+        }
+
+        .glow.two {
+            right: -280px;
+            bottom: -250px;
+        }
+
+        /* Navigation */
+
+        nav {
+            width: min(1100px, calc(100% - 40px));
+            height: 82px;
+
+            margin: 0 auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+
+            color: white;
+            text-decoration: none;
+
+            font-size: 20px;
+            font-weight: 750;
+
+            letter-spacing: -0.5px;
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #42b0ff,
+                    #1678c9
+                );
+
+            box-shadow:
+                0 8px 30px rgba(54, 163, 255, 0.22);
+        }
+
+        .brand-logo span {
+            color: white;
+
+            font-size: 20px;
+            font-weight: 850;
+        }
+
+        .github-link {
+            color: var(--muted);
+
+            font-size: 14px;
+            font-weight: 500;
+
+            text-decoration: none;
+
+            transition: color 0.2s ease;
+        }
+
+        .github-link:hover {
+            color: white;
+        }
+
+        /* Main */
+
+        main {
+            width: min(1000px, calc(100% - 40px));
+
+            margin: 0 auto;
+
+            padding: 72px 0 100px;
+        }
+
+        /* Hero */
+
+        .hero {
+            text-align: center;
+
+            max-width: 760px;
+
+            margin: 0 auto 58px;
+
+            animation: appear 0.65s ease both;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 7px 13px;
+
+            margin-bottom: 22px;
+
+            border:
+                1px solid rgba(54, 163, 255, 0.18);
+
+            border-radius: 999px;
+
+            background:
+                rgba(54, 163, 255, 0.065);
+
+            color: #8dccff;
+
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: var(--green);
+
+            box-shadow:
+                0 0 12px rgba(70, 217, 140, 0.7);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+
+            font-size: clamp(44px, 7vw, 72px);
+
+            line-height: 1.02;
+
+            letter-spacing: -3.5px;
+
+            font-weight: 850;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #ffffff 10%,
+                    #aeb9c9 100%
+                );
+
+            -webkit-background-clip: text;
+            background-clip: text;
+
+            color: transparent;
+        }
+
+        .hero-description {
+            max-width: 630px;
+
+            margin: 0 auto;
+
+            color: var(--muted);
+
+            font-size: 17px;
+
+            line-height: 1.7;
+        }
+
+        /* Download cards */
+
+        .downloads {
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 22px;
+        }
+
+        .download-card {
+            position: relative;
+
+            min-height: 350px;
+
+            padding: 30px;
+
+            overflow: hidden;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 22px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, 0.045),
+                    rgba(255, 255, 255, 0.012)
+                ),
+                var(--card);
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+
+            transition:
+                transform 0.25s ease,
+                border-color 0.25s ease,
+                background 0.25s ease;
+
+            animation: appear 0.7s ease both;
+        }
+
+        .download-card:nth-child(2) {
+            animation-delay: 0.08s;
+        }
+
+        .download-card::before {
+            content: "";
+
+            position: absolute;
+
+            width: 260px;
+            height: 260px;
+
+            top: -150px;
+            right: -130px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(54, 163, 255, 0.065);
+
+            filter: blur(20px);
+
+            pointer-events: none;
+        }
+
+        .download-card:hover {
+            transform: translateY(-5px);
+
+            border-color:
+                rgba(54, 163, 255, 0.3);
+
+            background: var(--card-hover);
+        }
+
+        .card-top {
+            display: flex;
+
+            align-items: flex-start;
+
+            justify-content: space-between;
+
+            margin-bottom: 25px;
+        }
+
+        .platform-icon {
+            width: 54px;
+            height: 54px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border:
+                1px solid rgba(255, 255, 255, 0.07);
+
+            border-radius: 15px;
+
+            background:
+                rgba(255, 255, 255, 0.05);
+
+            color: white;
+
+            font-size: 26px;
+        }
+
+        .recommended {
+            padding: 6px 10px;
+
+            border:
+                1px solid rgba(70, 217, 140, 0.16);
+
+            border-radius: 999px;
+
+            background:
+                rgba(70, 217, 140, 0.08);
+
+            color: #71e5a8;
+
+            font-size: 10px;
+
+            font-weight: 750;
+
+            letter-spacing: 0.6px;
+
+            text-transform: uppercase;
+        }
+
+        .download-card h2 {
+            margin-bottom: 10px;
+
+            font-size: 24px;
+
+            letter-spacing: -0.6px;
+        }
+
+        .description {
+            min-height: 70px;
+
+            color: var(--muted);
+
+            font-size: 14px;
+
+            line-height: 1.65;
+        }
+
+        /* Feature pills */
+
+        .features {
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 8px;
+
+            margin:
+                20px 0 25px;
+        }
+
+        .feature {
+            padding: 6px 9px;
+
+            border:
+                1px solid rgba(255, 255, 255, 0.04);
+
+            border-radius: 7px;
+
+            background:
+                rgba(255, 255, 255, 0.045);
+
+            color: #aeb8c7;
+
+            font-size: 11px;
+        }
+
+        /* Buttons */
+
+        .download-button {
+            width: 100%;
+            height: 49px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 10px;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--accent-dark)
+                );
+
+            color: white;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            font-weight: 750;
+
+            box-shadow:
+                0 10px 30px
+                rgba(54, 163, 255, 0.16);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .download-button:hover {
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 14px 35px
+                rgba(54, 163, 255, 0.27);
+        }
+
+        .download-button svg {
+            width: 17px;
+            height: 17px;
+
+            flex-shrink: 0;
+        }
+
+        /* Information */
+
+        .info {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 12px;
+
+            margin-top: 55px;
+
+            animation:
+                appear 0.8s ease both;
+        }
+
+        .info-item {
+            padding: 20px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 14px;
+
+            background:
+                rgba(255, 255, 255, 0.018);
+        }
+
+        .info-label {
+            margin-bottom: 7px;
+
+            color: #667184;
+
+            font-size: 10px;
+
+            font-weight: 650;
+
+            letter-spacing: 1px;
+
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            color: #cbd3df;
+
+            font-size: 14px;
+
+            font-weight: 600;
+        }
+
+        /* Footer */
+
+        footer {
+            width: min(1000px, calc(100% - 40px));
+
+            margin: 0 auto;
+
+            padding:
+                25px 0 40px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            border-top:
+                1px solid rgba(255, 255, 255, 0.06);
+
+            color: #596476;
+
+            font-size: 12px;
+        }
+
+        footer a {
+            color: #738096;
+
+            text-decoration: none;
+
+            transition: color 0.2s ease;
+        }
+
+        footer a:hover {
+            color: white;
+        }
+
+        /* Animation */
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+
+                transform:
+                    translateY(14px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+        /* Mobile */
+
+        @media (max-width: 720px) {
+
+            nav {
+                height: 70px;
+            }
+
+            main {
+                padding-top: 50px;
+            }
+
+            h1 {
+                letter-spacing: -2.5px;
+            }
+
+            .downloads {
+                grid-template-columns: 1fr;
+            }
+
+            .info {
+                grid-template-columns: 1fr;
+            }
+
+            footer {
+                flex-direction: column;
+
+                gap: 12px;
+
+                text-align: center;
+            }
+
+            .github-link {
+                display: none;
+            }
+        }
+
+        @media (max-width: 450px) {
+
+            main {
+                width:
+                    calc(100% - 28px);
+            }
+
+            nav {
+                width:
+                    calc(100% - 28px);
+            }
+
+            footer {
+                width:
+                    calc(100% - 28px);
+            }
+
+            .download-card {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="glow one"></div>
+    <div class="glow two"></div>
+
+
+    <!-- Navigation -->
+
+    <nav>
+
+        <a
+            class="brand"
+            href="https://manav-km.github.io/nexboard/"
+        >
+
+            <div class="brand-logo">
+                <span>N</span>
+            </div>
+
+            NexBoard
+
+        </a>
+
+        <a
+            class="github-link"
+            href="https://github.com/manav-km/nexboard"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            View on GitHub →
+        </a>
+
+    </nav>
+
+
+    <!-- Main -->
+
+    <main>
+
+        <!-- Hero -->
+
+        <section class="hero">
+
+            <div class="badge">
+
+                <span class="status-dot"></span>
+
+                Latest release · v1.0.0
+
+            </div>
+
+            <h1>
+                Download NexBoard
+            </h1>
+
+            <p class="hero-description">
+                A modern classroom whiteboard designed for
+                interactive displays, classrooms and desktop
+                annotation.
+            </p>
+
+        </section>
+
+
+        <!-- Download Options -->
+
+        <section class="downloads">
+
+
+            <!-- Windows Installer -->
+
+            <article class="download-card">
+
+                <div class="card-top">
+
+                    <div class="platform-icon">
+
+                        <svg
+                            width="27"
+                            height="27"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                        >
+                            <path
+                                d="M3 5.5 10.5 4v7H3z"
+                            />
+
+                            <path
+                                d="M12 3.7 21 2v9h-9z"
+                            />
+
+                            <path
+                                d="M3 12.8h7.5v7L3 18.5z"
+                            />
+
+                            <path
+                                d="M12 12.8h9v9l-9-1.7z"
+                            />
+                        </svg>
+
+                    </div>
+
+                    <div class="recommended">
+                        Recommended
+                    </div>
+
+                </div>
+
+
+                <h2>
+                    Windows Installer
+                </h2>
+
+
+                <p class="description">
+                    Install NexBoard normally on your Windows
+                    computer. The installer handles the
+                    application setup for you.
+                </p>
+
+
+                <div class="features">
+
+                    <span class="feature">
+                        Windows 10 / 11
+                    </span>
+
+                    <span class="feature">
+                        64-bit
+                    </span>
+
+                    <span class="feature">
+                        139 MB
+                    </span>
+
+                    <span class="feature">
+                        Easy setup
+                    </span>
+
+                </div>
+
+
+                <a
+                    class="download-button"
+                    href="https://github.com/manav-km/nexboard/releases/download/v1.0.0/NexBoard.Setup.1.0.0.exe"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M12 3v12"></path>
+
+                        <path d="m7 10 5 5 5-5"></path>
+
+                        <path d="M5 21h14"></path>
+                    </svg>
+
+                    Download Installer
+
+                </a>
+
+            </article>
+
+
+            <!-- Portable -->
+
+            <article class="download-card">
+
+                <div class="card-top">
+
+                    <div class="platform-icon">
+
+                        <svg
+                            width="27"
+                            height="27"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                        >
+                            <rect
+                                x="3"
+                                y="5"
+                                width="18"
+                                height="14"
+                                rx="2.5"
+                            />
+
+                            <path d="M7 9h10"></path>
+
+                            <path d="M7 13h6"></path>
+
+                            <circle
+                                cx="17"
+                                cy="14"
+                                r="1"
+                                fill="currentColor"
+                                stroke="none"
+                            />
+                        </svg>
+
+                    </div>
+
+                </div>
+
+
+                <h2>
+                    Portable Version
+                </h2>
+
+
+                <p class="description">
+                    Run NexBoard without installing anything.
+                    Ideal for USB drives, temporary computers
+                    and school systems.
+                </p>
+
+
+                <div class="features">
+
+                    <span class="feature">
+                        Windows 10 / 11
+                    </span>
+
+                    <span class="feature">
+                        64-bit
+                    </span>
+
+                    <span class="feature">
+                        138 MB
+                    </span>
+
+                    <span class="feature">
+                        No installation
+                    </span>
+
+                </div>
+
+
+                <a
+                    class="download-button"
+                    href="https://github.com/manav-km/nexboard/releases/download/v1.0.0/NexBoard.Portable.1.0.0.exe"
+                >
+
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path d="M12 3v12"></path>
+
+                        <path d="m7 10 5 5 5-5"></path>
+
+                        <path d="M5 21h14"></path>
+                    </svg>
+
+                    Download Portable
+
+                </a>
+
+            </article>
+
+        </section>
+
+
+        <!-- Information -->
+
+        <section class="info">
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    Version
+                </div>
+
+                <div class="info-value">
+                    NexBoard v1.0.0
+                </div>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    Platform
+                </div>
+
+                <div class="info-value">
+                    Windows 10 / 11 · 64-bit
+                </div>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <div class="info-label">
+                    License
+                </div>
+
+                <div class="info-value">
+                    Proprietary · All Rights Reserved
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Footer -->
+
+    <footer>
+
+        <span>
+            © 2026 Manav Kumar Mishra · NexBoard
+        </span>
+
+        <a
+            href="https://oneyearann.my.canva.site/nexboard"
+        >
+            ← Back to NexBoard
+        </a>
+
+    </footer>
+
+</body>
+</html>
